@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
+import 'package:inviders_losts/entity.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
             return ListView.builder(
               itemCount: todayData.data?.length,
               itemBuilder: (context, index) {
-                final String cardData = todayData.data?[index];
+                final OneCardData cardData = todayData.data?[index];
                 return CardDataWidget(cardData: cardData);
               },
             );
@@ -53,13 +54,15 @@ class CardDataWidget extends StatelessWidget {
     required this.cardData,
   }) : super(key: key);
 
-  final String cardData;
+  final OneCardData cardData;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(cardData),
+        trailing: Text(cardData.lostYesterday),
+        subtitle: Text(cardData.losts),
+        title: Text(cardData.title),
       ),
     );
   }
