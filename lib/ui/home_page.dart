@@ -37,27 +37,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
             return Container(
               height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/bg1.jpg'),
-                  fit: BoxFit.fitHeight
-                ),
+                    image: AssetImage('assets/bg1.jpg'), fit: BoxFit.fitHeight),
               ),
               child: ListView(
                 shrinkWrap: true,
                 primary: true,
-
                 children: [
-
+                  HeaderDataWidget(
+                      title:
+                          '${todayData.headline!} станом на ${todayData.todayDate}',
+                      date: todayData.todayDate,
+                      dayOfWar: DateTime.now()
+                          .difference(DateTime(2022, 2, 24))
+                          .inDays
+                          .toString()),
                   peopleIndex != null
                       ? OneCardWidget(
                           cardData: todayData.data![peopleIndex],
                           index: 12,
                           iconSize: 2,
                         )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   ListView.builder(
-
                     shrinkWrap: true,
                     itemCount: 6,
                     primary: false,
@@ -146,7 +149,6 @@ class OneCardWidget extends StatelessWidget {
       //   index: index,
       child: ListTile(
         style: ListTileStyle.drawer,
-        leading: null,
 
         trailing: Text(
           cardData.lostYesterday,
@@ -154,7 +156,8 @@ class OneCardWidget extends StatelessWidget {
         ),
         subtitle: Text(
           cardData.title,
-          style: TextStyle(fontSize: screenWidth / 26 * iconSize,color: Colors.black),
+          style: TextStyle(
+              fontSize: screenWidth / 26 * iconSize, color: Colors.black),
         ),
         title: Row(
           children: [
@@ -167,16 +170,70 @@ class OneCardWidget extends StatelessWidget {
                 height: screenHeight / 14 * iconSize,
                 fit: BoxFit.fitWidth,
                 color: Colors.black54,
+
                 // alignment: Alignment.center,
               ),
             ),
             Text(
               cardData.losts,
-              style: TextStyle(fontSize: screenWidth / 24 * iconSize, color: Colors.black54),
+              style: TextStyle(
+                  fontSize: screenWidth / 24 * iconSize, color: Colors.black54),
             ),
           ],
         ),
         // visualDensity: VisualDensity(vertical: 0.5),
+      ),
+    );
+  }
+}
+
+class HeaderDataWidget extends StatelessWidget {
+  const HeaderDataWidget({
+    Key? key,
+    required this.title,
+    required this.date,
+    required this.dayOfWar,
+  }) : super(key: key);
+  final dayOfWar;
+  final title;
+  final date;
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            dayOfWar,
+            style: TextStyle(
+                fontSize: height / 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.yellow[400]),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Column(
+            children: [
+              Text(
+                'ДЕНЬ',
+                style: TextStyle(
+                    fontSize: height / 23,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.yellow[400]),
+              ),
+              Text(
+                'ВІЙНИ',
+                style: TextStyle(
+                    fontSize: height / 27,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.yellow[400]),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

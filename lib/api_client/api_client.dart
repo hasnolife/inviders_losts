@@ -35,7 +35,7 @@ class ApiClient {
             .children[0]
             .children[i]
             .text;
-        cardData.add(stringDivider(cardString ?? ''));
+        cardData.add(_stringDivider(cardString ?? ''));
       }
 
       return TodayData(
@@ -45,7 +45,9 @@ class ApiClient {
     }
   }
 
-  OneCardData stringDivider(String cardString) {
+
+
+  OneCardData _stringDivider(String cardString) {
     final cardStringsList = cardString.split('— ');
     final title = cardStringsList[0];
     final lost = cardStringsList[1].split('(');
