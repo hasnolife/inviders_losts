@@ -157,7 +157,7 @@ class OneCardWidget extends StatelessWidget {
         subtitle: Text(
           cardData.title,
           style: TextStyle(
-              fontSize: screenWidth / 26 * iconSize, color: Colors.black),
+              fontSize: screenWidth / 28 * iconSize, color: Colors.black),
         ),
         title: Row(
           children: [
