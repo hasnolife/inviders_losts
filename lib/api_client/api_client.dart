@@ -50,7 +50,11 @@ class ApiClient {
     final title = cardStringsList[0];
     final lost = cardStringsList[1].split('(');
 
-    final losts = lost[0];
+    var losts = lost[0];
+    final splitLosts = losts.split(' ');
+    if (splitLosts.length > 2) {
+      losts = splitLosts[1];
+    }
     final lostYesterday;
     if (lost.length > 1) {
       lostYesterday = lost[1].split(')')[0];
