@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
 import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/resourses/consts.dart';
+import 'package:inviders_losts/ui/home_test.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -34,14 +35,16 @@ class _MyHomePageState extends State<MyHomePage> {
             final peopleIndex = (todayData.data!.length % 2 != 0)
                 ? todayData.data!.length - 1
                 : null;
-
+            // return MainListViewWidget();
             return Container(
               height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/bg1.jpg'), fit: BoxFit.fitHeight),
+                    image: AssetImage('assets/bg1.jpg'), fit: BoxFit.cover),
               ),
-              child: ListView(
+              child:
+              ListView(
                 shrinkWrap: true,
                 primary: true,
                 children: [
@@ -56,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   peopleIndex != null
                       ? OneCardWidget(
                           cardData: todayData.data![peopleIndex],
-                          index: 12,
+                          index: peopleIndex,
                           iconSize: 2,
                         )
                       : const SizedBox.shrink(),
@@ -66,15 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     primary: false,
                     itemBuilder: (context, index) {
                       final OneCardData cardData = todayData.data?[index];
-                      return CardDataWidget(
+
+                      return RowCardDataWidget(
                           todayData: todayData, index: index * 2);
                     },
-                    // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    //   crossAxisCount: (MediaQuery.of(context).orientation ==
-                    //           Orientation.portrait
-                    //       ? 2
-                    //       : 3),
-                    // ),
+
                   ),
                 ],
               ),
@@ -94,8 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class CardDataWidget extends StatelessWidget {
-  const CardDataWidget({
+class RowCardDataWidget extends StatelessWidget {
+  const RowCardDataWidget({
     Key? key,
     required this.todayData,
     required this.index,
@@ -106,24 +105,31 @@ class CardDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rowCount = MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4;
     final cardData = todayData.data![index];
-    return Row(
-      children: [
-        Expanded(
+    final cardHeight = MediaQuery.of(context).size.height / (todayData.todayDate!.length - 2);
+    final cardWidth = MediaQuery.of(context).size.width / rowCount;
+
+    return Container(
+      height:  cardHeight,
+      child: ListView.builder(
+
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: rowCount,
+        itemBuilder: (context, rowIndex) {
+          return Container(
+            width: cardWidth,
             child: OneCardWidget(
-          cardData: todayData.data![index],
-          index: index,
-          iconSize: 1,
-        )),
-        Expanded(
-          child: OneCardWidget(
-            cardData: todayData.data![index + 1],
-            index: index + 1,
-            iconSize: 1,
-          ),
-        ),
-      ],
+                      cardData: todayData.data![index + rowIndex],
+                      index: index + rowIndex,
+                      iconSize: 1,
+                    ),
+          );
+        },
+      ),
     );
+
   }
 }
 
@@ -144,20 +150,22 @@ class OneCardWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Card(
-      // child: CustomListTileWidget(
-      //   cardData: cardData,
-      //   index: index,
+
       child: ListTile(
         style: ListTileStyle.drawer,
 
         trailing: Text(
           cardData.lostYesterday,
-          style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
+          style: TextStyle(fontSize: screenWidth / 25, color: Colors.red),
+          // style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
         ),
-        subtitle: Text(
-          cardData.title,
-          style: TextStyle(
-              fontSize: screenWidth / 28 * iconSize, color: Colors.black),
+        subtitle: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            cardData.title,
+            style: TextStyle(
+                fontSize: screenWidth / 28 * iconSize, color: Colors.black),
+          ),
         ),
         title: Row(
           children: [
@@ -208,7 +216,7 @@ class HeaderDataWidget extends StatelessWidget {
           Text(
             dayOfWar,
             style: TextStyle(
-                fontSize: height / 10,
+                fontSize: height / 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.yellow[400]),
           ),
@@ -220,14 +228,14 @@ class HeaderDataWidget extends StatelessWidget {
               Text(
                 'ДЕНЬ',
                 style: TextStyle(
-                    fontSize: height / 23,
+                    fontSize: height / 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.yellow[400]),
               ),
               Text(
                 'ВІЙНИ',
                 style: TextStyle(
-                    fontSize: height / 27,
+                    fontSize: height / 33,
                     fontWeight: FontWeight.bold,
                     color: Colors.yellow[400]),
               ),
