@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
 import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/resourses/consts.dart';
@@ -19,6 +20,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     data = ApiClient().getData();
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
   @override
@@ -40,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
             final height = MediaQuery.of(context).size.height;
             final width = MediaQuery.of(context).size.width;
             final portraitHeight = height / ((todayData.todayDate!.length  + 1) / rowCount + 2);
-            final albumHeight = height / ((todayData.todayDate!.length  + 0) / rowCount);
+            final albumHeight = height / ((todayData.todayDate!.length  + 2) / rowCount);
 
             return Container(
               height: height,
@@ -85,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     child: OneCardWidget(
                                       cardData: todayData.data![peopleIndex],
                                       index: peopleIndex,
-                                      iconSize: 3 / rowCount,
+                                      iconSize: 2 / rowCount,
                                       cardHeight: cardHeight,
                                     ),
                                   ),
@@ -191,16 +193,17 @@ class OneCardWidget extends StatelessWidget {
 
         trailing: Text(
           cardData.lostYesterday,
-          style: TextStyle(fontSize: screenWidth / 25, color: Colors.red),
+          style: TextStyle(fontSize: cardHeight/7/iconSize, color: Colors.red),
           // style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
         ),
         subtitle: FittedBox(
+
           fit: BoxFit.scaleDown,
           alignment: Alignment.bottomLeft,
           child: Text(
             cardData.title,
             style: TextStyle(
-                fontSize: screenWidth / 28 * iconSize, color: Colors.black),
+                fontSize: cardHeight/6/iconSize, color: Colors.black),
           ),
         ),
         title: Row(
@@ -222,7 +225,7 @@ class OneCardWidget extends StatelessWidget {
             Text(
               cardData.losts,
               style: TextStyle(
-                  fontSize: screenWidth / 24 * iconSize, color: Colors.black54),
+                  fontSize: cardHeight/6/iconSize, color: Colors.black54),
             ),
           ],
         ),
