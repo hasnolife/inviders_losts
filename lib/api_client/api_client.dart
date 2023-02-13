@@ -46,7 +46,7 @@ class ApiClient {
   }
 
 
-
+// parse string and return data class
   OneCardData _stringDivider(String cardString) {
     final cardStringsList = cardString.split('— ');
     final title = cardStringsList[0];
@@ -57,7 +57,7 @@ class ApiClient {
     if (splitLosts.length > 2) {
       losts = splitLosts[1];
     }
-    final lostYesterday;
+    late final String lostYesterday;
     if (lost.length > 1) {
       lostYesterday = lost[1].split(')')[0];
     } else {

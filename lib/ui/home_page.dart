@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
 import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/resourses/consts.dart';
-import 'package:inviders_losts/ui/home_test.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -18,9 +18,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    data = ApiClient().getData();
+    _getData();
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+
+  Future<void> _getData() async {
+    data = ApiClient().getData();
   }
 
   @override
@@ -95,17 +99,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                 : const SizedBox.shrink(),
                           ]),
                     ),
-                    ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: (gridLength ~/ rowCount),
-                      primary: false,
-                      itemBuilder: (context, index) {
-                        // final OneCardData cardData = todayData.data?[index];
+                    RefreshIndicator(
+                      onRefresh: _getData,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: (gridLength ~/ rowCount),
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          // final OneCardData cardData = todayData.data?[index];
 
-                        return RowCardDataWidget(
-                            todayData: todayData, index: index * rowCount);
-                      },
+                          return RowCardDataWidget(
+                              todayData: todayData, index: index * rowCount);
+                        },
+                      ),
                     ),
                   ],
                 );
@@ -115,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
             return Center(
                 child: Text(
               "Error ${snapshot.error.toString()}",
-              style: TextStyle(fontSize: 40),
+              style: const TextStyle(fontSize: 40),
             ));
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -145,14 +153,15 @@ class RowCardDataWidget extends StatelessWidget {
         ((todayData.todayDate!.length  + 1) / rowCount + 2);
     final cardWidth = MediaQuery.of(context).size.width / rowCount;
 
-    return Container(
+    return SizedBox(
       height: cardHeight,
       child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemCount: rowCount,
         itemBuilder: (context, rowIndex) {
-          return Container(
+          return SizedBox(
             width: cardWidth,
             child: OneCardWidget(
               cardData: todayData.data![index + rowIndex],
@@ -209,13 +218,13 @@ class OneCardWidget extends StatelessWidget {
         title: Row(
           children: [
             SizedBox(
-              width: screenWidth / 6 * iconSize,
+              width: screenWidth / 7 * iconSize,
               // height: screenHeight / 14,
-              height: cardHeight / 2,
+              height: cardHeight / 2.5,
               child: Image.asset(
                 icons[index],
-                width: screenWidth / 6 * iconSize,
-                height: screenHeight / 14 * iconSize,
+                width: screenWidth / 7 * iconSize,
+                height: screenHeight / 15 * iconSize,
                 fit: BoxFit.contain,
                 color: Colors.black54,
 
