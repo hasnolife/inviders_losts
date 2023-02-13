@@ -1,19 +1,27 @@
-import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/material.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
+import 'package:inviders_losts/entity.dart';
 
 class HomePageModel extends ChangeNotifier {
   final _apiClient = ApiClient();
-  late final _futureData;
-  get futureData => -_futureData;
-  late final _data;
-  get data => -_data;
+  late final Future<TodayData> _futureData;
+  get futureData => _futureData;
+  late final TodayData _data;
+  get data => _data;
 
   HomePageModel() {
     _setup();
   }
 
+  Future<void> onRefresh() async {
+    _futureData = _apiClient.getData();
+    notifyListeners();
+  }
+
   void _setup() {
-   _futureData = _apiClient.getData().then((data) => data=data);
+   _futureData = _apiClient.getData().then((data) => _data=data);
+   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
 }

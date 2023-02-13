@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inviders_losts/ui/home_page_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
@@ -6,38 +7,22 @@ import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/resourses/consts.dart';
 
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  late final Future<TodayData> data;
-
-  @override
-  void initState() {
-    _getData();
-    super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  }
-
-  Future<void> _getData() async {
-    data = ApiClient().getData();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final model =  context.read<HomePageModel>();
+    final futureData = model.futureData;
 
     final rowCount =
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     return Scaffold(
       body: FutureBuilder(
-        future: data,
+        future: futureData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final todayData = snapshot.data as TodayData;
+            final todayData = model.data;
             final gridLength = (todayData.data!.length % 2 != 0)
                 ? todayData.data!.length - 1
                 : todayData.data!.length;
@@ -101,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ]),
                     ),
                     RefreshIndicator(
-                      onRefresh: _getData,
+                      onRefresh: model.onRefresh,
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         physics: ScrollPhysics(),
