@@ -13,7 +13,7 @@ class ApiClient {
   final _client = HttpClient();
 
   Future<TodayData> getData() async {
-    final request = await _client.getUrl(Uri.parse(url));
+    final request = await _client.getUrl(Uri.parse(Configuration.url));
 
     final response = await request.close();
 

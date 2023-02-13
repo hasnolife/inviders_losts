@@ -39,7 +39,7 @@ class MyHomePage extends StatelessWidget {
               width: width,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/bg1.jpg'), fit: BoxFit.cover),
+                    image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
               ),
               child: LayoutBuilder(builder: (context, constraints) {
                 final cardHeight = MediaQuery.of(context).orientation == Orientation.portrait ? portraitHeight : albumHeight;
@@ -208,7 +208,7 @@ class OneCardWidget extends StatelessWidget {
               // height: screenHeight / 14,
               height: cardHeight / 2.5,
               child: Image.asset(
-                icons[index],
+                AppImages.icons[index],
                 width: screenWidth / 7 * iconSize,
                 height: screenHeight / 15 * iconSize,
                 fit: BoxFit.contain,
