@@ -67,7 +67,19 @@ class HomePageWidget extends StatelessWidget {
         height / ((todayData.todayDate!.length + 1) / rowCount + 2);
     final albumHeight = height / ((todayData.todayDate!.length + 2) / rowCount);
     return Scaffold(
-
+      appBar: AppBar(
+        title: FittedBox(
+          fit: BoxFit.fitHeight,
+          child: HeaderDataWidget(
+              title:
+              '${todayData.headline!} станом на ${todayData.todayDate}',
+              date: todayData.todayDate,
+              dayOfWar: DateTime.now()
+                  .difference(DateTime(2022, 2, 24))
+                  .inDays
+                  .toString()),
+        ),
+      ),
       body: Container(
         height: height,
         width: width,
@@ -85,28 +97,28 @@ class HomePageWidget extends StatelessWidget {
             // primary: true,
             mainAxisAlignment: MainAxisAlignment.end,
 
-            children: [
-              Expanded(
-                child: Flex(
-                    direction:
-                        MediaQuery.of(context).orientation == Orientation.portrait
-                            ? Axis.vertical
-                            : Axis.horizontal,
-                    // mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: FittedBox(
-                          fit: BoxFit.fitHeight,
-                          child: HeaderDataWidget(
-                              title:
-                                  '${todayData.headline!} станом на ${todayData.todayDate}',
-                              date: todayData.todayDate,
-                              dayOfWar: DateTime.now()
-                                  .difference(DateTime(2022, 2, 24))
-                                  .inDays
-                                  .toString()),
-                        ),
-                      ),
+             children: [
+              // Expanded(
+                // child: Flex(
+                //     direction:
+                //         MediaQuery.of(context).orientation == Orientation.portrait
+                //             ? Axis.vertical
+                //             : Axis.horizontal,
+                //     mainAxisSize: MainAxisSize.min,
+                    // children: [
+                    //   Expanded(
+                    //     child: FittedBox(
+                    //       fit: BoxFit.fitHeight,
+                    //       child: HeaderDataWidget(
+                    //           title:
+                    //               '${todayData.headline!} станом на ${todayData.todayDate}',
+                    //           date: todayData.todayDate,
+                    //           dayOfWar: DateTime.now()
+                    //               .difference(DateTime(2022, 2, 24))
+                    //               .inDays
+                    //               .toString()),
+                    //     ),
+                    //   ),
                       peopleIndex != null
                           ? Expanded(
                               flex: 2,
@@ -121,23 +133,20 @@ class HomePageWidget extends StatelessWidget {
                               ),
                             )
                           : const SizedBox.shrink(),
-                    ]),
-              ),
-              RefreshIndicator(
-                onRefresh: model.onRefresh,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: (gridLength ~/ rowCount),
-                  primary: false,
-                  itemBuilder: (context, index) {
-                    // final OneCardData cardData = todayData.data?[index];
+                    // ]),
+              // ),
+              ListView.builder(
+                padding: EdgeInsets.zero,
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: (gridLength ~/ rowCount),
+                primary: false,
+                itemBuilder: (context, index) {
+                  // final OneCardData cardData = todayData.data?[index];
 
-                    return RowCardDataWidget(
-                        todayData: todayData, index: index * rowCount);
-                  },
-                ),
+                  return RowCardDataWidget(
+                      todayData: todayData, index: index * rowCount);
+                },
               ),
             ],
           );
