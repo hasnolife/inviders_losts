@@ -200,14 +200,10 @@ class OneCardWidget extends StatelessWidget {
               TextStyle(fontSize: cardHeight / 7 / iconSize, color: Colors.red),
           // style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
         ),
-        subtitle: FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            cardData.title,
-            style: TextStyle(
-                fontSize: cardHeight / 6 / iconSize, color: Colors.black),
-          ),
+        subtitle: Text(
+          cardData.title,
+          style: TextStyle(
+              fontSize: cardHeight / 6 / iconSize, color: Colors.black),
         ),
         title: Row(
           children: [
