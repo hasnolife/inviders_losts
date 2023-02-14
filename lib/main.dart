@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inviders_losts/my_app.dart';
+import 'package:inviders_losts/ui/my_app.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 
 
