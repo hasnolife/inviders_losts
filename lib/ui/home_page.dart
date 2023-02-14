@@ -2,119 +2,146 @@ import 'package:flutter/material.dart';
 import 'package:inviders_losts/ui/home_page_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import 'package:inviders_losts/api_client/api_client.dart';
 import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/resourses/consts.dart';
-
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model =  context.read<HomePageModel>();
+    final model = context.read<HomePageModel>();
     final futureData = model.futureData;
 
+    return FutureBuilder(
+      future: futureData,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return HomePageWidget();
+        } else if (snapshot.hasError) {
+          return _ErrorWidget(errorMessage: snapshot.error.toString());
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+}
+
+class _ErrorWidget extends StatelessWidget {
+  final String errorMessage;
+
+  const _ErrorWidget({Key? key, required this.errorMessage}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Text(
+      "Error $errorMessage",
+      style: const TextStyle(fontSize: 40),
+    ));
+  }
+}
+
+class HomePageWidget extends StatelessWidget {
+  const HomePageWidget({
+    super.key,
+
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    final model = context.read<HomePageModel>();
     final rowCount =
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
+    final todayData = model.data;
+    final gridLength = (todayData.data!.length % 2 != 0)
+        ? todayData.data!.length - 1
+        : todayData.data!.length;
+    final peopleIndex =
+        (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final portraitHeight =
+        height / ((todayData.todayDate!.length + 1) / rowCount + 2);
+    final albumHeight = height / ((todayData.todayDate!.length + 2) / rowCount);
     return Scaffold(
-      body: FutureBuilder(
-        future: futureData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final todayData = model.data;
-            final gridLength = (todayData.data!.length % 2 != 0)
-                ? todayData.data!.length - 1
-                : todayData.data!.length;
-            final peopleIndex = (todayData.data!.length % 2 != 0)
-                ? todayData.data!.length - 1
-                : null;
-            final height = MediaQuery.of(context).size.height;
-            final width = MediaQuery.of(context).size.width;
-            final portraitHeight = height / ((todayData.todayDate!.length  + 1) / rowCount + 2);
-            final albumHeight = height / ((todayData.todayDate!.length  + 2) / rowCount);
 
-            return Container(
-              height: height,
-              width: width,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
-              ),
-              child: LayoutBuilder(builder: (context, constraints) {
-                final cardHeight = MediaQuery.of(context).orientation == Orientation.portrait ? portraitHeight : albumHeight;
-                return Column(
-                  // shrinkWrap: true,
-                  // primary: true,
-                  mainAxisAlignment: MainAxisAlignment.end,
+      body: Container(
+        height: height,
+        width: width,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
+        ),
+        child: LayoutBuilder(builder: (context, constraints) {
+          final cardHeight =
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? portraitHeight
+                  : albumHeight;
+          return Column(
+            // shrinkWrap: true,
+            // primary: true,
+            mainAxisAlignment: MainAxisAlignment.end,
 
-                  children: [
-                    Expanded(
-
-                      child: Flex(
-                        direction: MediaQuery.of(context).orientation == Orientation.portrait ? Axis.vertical : Axis.horizontal,
-                          // mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Expanded(
-                              child: FittedBox(
-                                fit: BoxFit.fitHeight,
-                                child: HeaderDataWidget(
-                                    title:
-                                        '${todayData.headline!} станом на ${todayData.todayDate}',
-                                    date: todayData.todayDate,
-                                    dayOfWar: DateTime.now()
-                                        .difference(DateTime(2022, 2, 24))
-                                        .inDays
-                                        .toString()),
-                              ),
-                            ),
-                            peopleIndex != null
-                                ? Expanded(
-                              flex: 2,
-                                  child: Container(
-
-                              height: cardHeight,
-                                    child: OneCardWidget(
-                                      cardData: todayData.data![peopleIndex],
-                                      index: peopleIndex,
-                                      iconSize: 2 / rowCount,
-                                      cardHeight: cardHeight,
-                                    ),
-                                  ),
-                                )
-                                : const SizedBox.shrink(),
-                          ]),
-                    ),
-                    RefreshIndicator(
-                      onRefresh: model.onRefresh,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        physics: ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: (gridLength ~/ rowCount),
-                        primary: false,
-                        itemBuilder: (context, index) {
-                          // final OneCardData cardData = todayData.data?[index];
-
-                          return RowCardDataWidget(
-                              todayData: todayData, index: index * rowCount);
-                        },
+            children: [
+              Expanded(
+                child: Flex(
+                    direction:
+                        MediaQuery.of(context).orientation == Orientation.portrait
+                            ? Axis.vertical
+                            : Axis.horizontal,
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.fitHeight,
+                          child: HeaderDataWidget(
+                              title:
+                                  '${todayData.headline!} станом на ${todayData.todayDate}',
+                              date: todayData.todayDate,
+                              dayOfWar: DateTime.now()
+                                  .difference(DateTime(2022, 2, 24))
+                                  .inDays
+                                  .toString()),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-                child: Text(
-              "Error ${snapshot.error.toString()}",
-              style: const TextStyle(fontSize: 40),
-            ));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+                      peopleIndex != null
+                          ? Expanded(
+                              flex: 2,
+                              child: Container(
+                                height: cardHeight,
+                                child: OneCardWidget(
+                                  cardData: todayData.data![peopleIndex],
+                                  index: peopleIndex,
+                                  iconSize: 2 / rowCount,
+                                  cardHeight: cardHeight,
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ]),
+              ),
+              RefreshIndicator(
+                onRefresh: model.onRefresh,
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: (gridLength ~/ rowCount),
+                  primary: false,
+                  itemBuilder: (context, index) {
+                    // final OneCardData cardData = todayData.data?[index];
+
+                    return RowCardDataWidget(
+                        todayData: todayData, index: index * rowCount);
+                  },
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -136,7 +163,7 @@ class RowCardDataWidget extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     final cardData = todayData.data![index];
     final cardHeight = MediaQuery.of(context).size.height /
-        ((todayData.todayDate!.length  + 1) / rowCount + 2);
+        ((todayData.todayDate!.length + 1) / rowCount + 2);
     final cardWidth = MediaQuery.of(context).size.width / rowCount;
 
     return SizedBox(
@@ -169,7 +196,6 @@ class OneCardWidget extends StatelessWidget {
     required this.index,
     required this.iconSize,
     required this.cardHeight,
-
   }) : super(key: key);
 
   final OneCardData cardData;
@@ -188,17 +214,17 @@ class OneCardWidget extends StatelessWidget {
 
         trailing: Text(
           cardData.lostYesterday,
-          style: TextStyle(fontSize: cardHeight/7/iconSize, color: Colors.red),
+          style:
+              TextStyle(fontSize: cardHeight / 7 / iconSize, color: Colors.red),
           // style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
         ),
         subtitle: FittedBox(
-
           fit: BoxFit.scaleDown,
           alignment: Alignment.bottomLeft,
           child: Text(
             cardData.title,
             style: TextStyle(
-                fontSize: cardHeight/6/iconSize, color: Colors.black),
+                fontSize: cardHeight / 6 / iconSize, color: Colors.black),
           ),
         ),
         title: Row(
@@ -220,7 +246,7 @@ class OneCardWidget extends StatelessWidget {
             Text(
               cardData.losts,
               style: TextStyle(
-                  fontSize: cardHeight/6/iconSize, color: Colors.black54),
+                  fontSize: cardHeight / 6 / iconSize, color: Colors.black54),
             ),
           ],
         ),
