@@ -70,10 +70,11 @@ class HomePageWidget extends StatelessWidget {
         (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    final portraitHeight = MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
+    final portraitHeight =
+        MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
     final albumHeight = height / 6;
     return Container(
-     decoration: const BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
             image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
       ),
@@ -145,7 +146,8 @@ class RowCardDataWidget extends StatelessWidget {
     final rowCount =
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     // final cardData = todayData.data![index];
-    final cardHeight = MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
+    final cardHeight =
+        MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
     final cardWidth = MediaQuery.of(context).size.width / (rowCount);
 
     return SizedBox(
@@ -193,17 +195,20 @@ class OneCardWidget extends StatelessWidget {
     return Card(
       child: ListTile(
         style: ListTileStyle.drawer,
-
         trailing: Text(
           cardData.lostYesterday,
           style:
               TextStyle(fontSize: cardHeight / 7 / iconSize, color: Colors.red),
-          // style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
         ),
         subtitle: Text(
           cardData.title,
+          maxLines: 3,
+          softWrap: true,
           style: TextStyle(
-              fontSize: cardHeight / 6 / iconSize, color: Colors.black),
+            fontSize: cardHeight / 6.2 / iconSize,
+            color: Colors.black,
+            height: 0.9
+          ),
         ),
         title: Row(
           children: [
@@ -217,8 +222,6 @@ class OneCardWidget extends StatelessWidget {
                 height: screenHeight / 15 * iconSize,
                 fit: BoxFit.contain,
                 color: Colors.black54,
-
-                // alignment: Alignment.center,
               ),
             ),
             Text(
@@ -228,7 +231,6 @@ class OneCardWidget extends StatelessWidget {
             ),
           ],
         ),
-        // visualDensity: VisualDensity(vertical: 0.5),
       ),
     );
   }
