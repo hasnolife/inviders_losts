@@ -37,9 +37,9 @@ class _ErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: Text(
-          "Error $errorMessage",
-          style: const TextStyle(fontSize: 40),
-        ));
+      "Error $errorMessage",
+      style: const TextStyle(fontSize: 40),
+    ));
   }
 }
 
@@ -61,55 +61,42 @@ class HomePageWidget extends StatelessWidget {
   Container buildScaffoldBody(BuildContext context) {
     final model = context.watch<HomePageModel>();
     final rowCount =
-    MediaQuery
-        .of(context)
-        .orientation == Orientation.portrait ? 2 : 3;
+        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     final todayData = model.data;
     final gridLength = (todayData.data!.length % 2 != 0)
         ? todayData.data!.length - 1
         : todayData.data!.length;
     final peopleIndex =
-    (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final portraitHeight =
-        height / ((todayData.todayDate!.length + 1) / rowCount + 2);
-    final albumHeight = height / ((todayData.todayDate!.length + 2) / rowCount);
+        (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final portraitHeight = MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
+    final albumHeight = height / 6;
     return Container(
-      // height: height,
-      // width: width,
-      decoration: const BoxDecoration(
+     decoration: const BoxDecoration(
         image: DecorationImage(
             image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final cardHeight =
-          MediaQuery
-              .of(context)
-              .orientation == Orientation.portrait
-              ? portraitHeight
-              : albumHeight;
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? portraitHeight
+                  : albumHeight;
           return RefreshIndicator(
             onRefresh: () => model.onRefresh(context),
             child: ListView(
               children: [
                 peopleIndex != null
                     ? SizedBox(
-                  height: cardHeight,
-                  child: OneCardWidget(
-                    cardData: todayData.data![peopleIndex],
-                    index: peopleIndex,
-                    iconSize: 2 / rowCount,
-                    cardHeight: cardHeight,
-                  ),
-                )
+                        height: cardHeight,
+                        child: OneCardWidget(
+                          cardData: todayData.data![peopleIndex],
+                          index: peopleIndex,
+                          iconSize: 2 / rowCount,
+                          cardHeight: cardHeight,
+                        ),
+                      )
                     : const SizedBox.shrink(),
                 ListView.builder(
                   padding: EdgeInsets.zero,
@@ -133,13 +120,13 @@ class HomePageWidget extends StatelessWidget {
   }
 
   AppBar buildAppBar(BuildContext context) {
-    final todayData = context
-        .read<HomePageModel>()
-        .data;
+    final todayData = context.read<HomePageModel>().data;
     return AppBar(
-        title: FittedBox(
+      title: FittedBox(
         fit: BoxFit.fitHeight,
-        child: HeaderDataWidget(),),);
+        child: HeaderDataWidget(),
+      ),
+    );
   }
 }
 
@@ -156,19 +143,10 @@ class RowCardDataWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rowCount =
-    MediaQuery
-        .of(context)
-        .orientation == Orientation.portrait ? 2 : 3;
-    final cardData = todayData.data![index];
-    final cardHeight = MediaQuery
-        .of(context)
-        .size
-        .height /
-        ((todayData.todayDate!.length + 1) / rowCount + 2);
-    final cardWidth = MediaQuery
-        .of(context)
-        .size
-        .width / rowCount;
+        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
+    // final cardData = todayData.data![index];
+    final cardHeight = MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
+    final cardWidth = MediaQuery.of(context).size.width / (rowCount);
 
     return SizedBox(
       height: cardHeight,
@@ -209,14 +187,8 @@ class OneCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Card(
       child: ListTile(
@@ -225,7 +197,7 @@ class OneCardWidget extends StatelessWidget {
         trailing: Text(
           cardData.lostYesterday,
           style:
-          TextStyle(fontSize: cardHeight / 7 / iconSize, color: Colors.red),
+              TextStyle(fontSize: cardHeight / 7 / iconSize, color: Colors.red),
           // style: TextStyle(fontSize: screenWidth / 20, color: Colors.red),
         ),
         subtitle: FittedBox(
@@ -274,18 +246,10 @@ class HeaderDataWidget extends StatelessWidget {
     final model = context.read<HomePageModel>();
     final todayData = model.data;
     final title = '${todayData.headline!} станом на ${todayData.todayDate}';
-    final dayOfWar = DateTime
-        .now()
-        .difference(DateTime(2022, 2, 24))
-        .inDays
-        .toString();
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    final direction = MediaQuery
-        .of(context)
-        .orientation == Orientation.portrait
+    final dayOfWar =
+        DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
+    final height = MediaQuery.of(context).size.height;
+    final direction = MediaQuery.of(context).orientation == Orientation.portrait
         ? Axis.vertical
         : Axis.horizontal;
     return Flex(
