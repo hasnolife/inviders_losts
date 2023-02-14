@@ -52,73 +52,47 @@ class HomePageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<HomePageModel>();
+
+    return Scaffold(
+      appBar: buildAppBar(context),
+      body: buildScaffoldBody(context),
+    );
+  }
+
+  Container buildScaffoldBody(BuildContext context) {
+    final model = context.watch<HomePageModel>();
     final rowCount =
-        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
+    MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     final todayData = model.data;
     final gridLength = (todayData.data!.length % 2 != 0)
         ? todayData.data!.length - 1
         : todayData.data!.length;
     final peopleIndex =
-        (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
+    (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final portraitHeight =
         height / ((todayData.todayDate!.length + 1) / rowCount + 2);
     final albumHeight = height / ((todayData.todayDate!.length + 2) / rowCount);
-    return Scaffold(
-      appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.fitHeight,
-          child: HeaderDataWidget(
-              title:
-              '${todayData.headline!} станом на ${todayData.todayDate}',
-              date: todayData.todayDate,
-              dayOfWar: DateTime.now()
-                  .difference(DateTime(2022, 2, 24))
-                  .inDays
-                  .toString()),
-        ),
+    return Container(
+      // height: height,
+      // width: width,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
       ),
-      body: Container(
-        height: height,
-        width: width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
-        ),
-        child: LayoutBuilder(builder: (context, constraints) {
-          final cardHeight =
-              MediaQuery.of(context).orientation == Orientation.portrait
-                  ? portraitHeight
-                  : albumHeight;
-          return Column(
-            // shrinkWrap: true,
-            // primary: true,
-            mainAxisAlignment: MainAxisAlignment.end,
+      child: LayoutBuilder(builder: (context, constraints) {
+        final cardHeight =
+            MediaQuery.of(context).orientation == Orientation.portrait
+                ? portraitHeight
+                : albumHeight;
+        return RefreshIndicator(
+          onRefresh: model.onRefresh,
+          child: ListView(
+
 
              children: [
-              // Expanded(
-                // child: Flex(
-                //     direction:
-                //         MediaQuery.of(context).orientation == Orientation.portrait
-                //             ? Axis.vertical
-                //             : Axis.horizontal,
-                //     mainAxisSize: MainAxisSize.min,
-                    // children: [
-                    //   Expanded(
-                    //     child: FittedBox(
-                    //       fit: BoxFit.fitHeight,
-                    //       child: HeaderDataWidget(
-                    //           title:
-                    //               '${todayData.headline!} станом на ${todayData.todayDate}',
-                    //           date: todayData.todayDate,
-                    //           dayOfWar: DateTime.now()
-                    //               .difference(DateTime(2022, 2, 24))
-                    //               .inDays
-                    //               .toString()),
-                    //     ),
-                    //   ),
+
                       peopleIndex != null
                           ? Expanded(
                               flex: 2,
@@ -149,8 +123,25 @@ class HomePageWidget extends StatelessWidget {
                 },
               ),
             ],
-          );
-        }),
+          ),
+        );
+      }),
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    final todayData = context.read<HomePageModel>().data;
+    return AppBar(
+      title: FittedBox(
+        fit: BoxFit.fitHeight,
+        child: HeaderDataWidget(
+            title:
+            '${todayData.headline!} станом на ${todayData.todayDate}',
+            date: todayData.todayDate,
+            dayOfWar: DateTime.now()
+                .difference(DateTime(2022, 2, 24))
+                .inDays
+                .toString()),
       ),
     );
   }
