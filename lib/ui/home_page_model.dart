@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
 import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/ui/main_navigation.dart';
@@ -22,6 +23,9 @@ class HomePageModel extends ChangeNotifier {
   void _setup() {
    _futureData = _apiClient.getData().then((data) => _data=data);
    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+   SystemChrome.setPreferredOrientations([
+     DeviceOrientation.portraitUp,
+   ]);
   }
 
 }
