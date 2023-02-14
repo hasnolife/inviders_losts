@@ -17,7 +17,7 @@ class MyHomePage extends StatelessWidget {
       future: futureData,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return HomePageWidget();
+          return const HomePageWidget();
         } else if (snapshot.hasError) {
           return _ErrorWidget(errorMessage: snapshot.error.toString());
         } else {
@@ -46,29 +46,28 @@ class _ErrorWidget extends StatelessWidget {
 class HomePageWidget extends StatelessWidget {
   const HomePageWidget({
     super.key,
-
   });
-
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: buildAppBar(context),
-      body: buildScaffoldBody(context),
+    return SafeArea(
+      child: Scaffold(
+        appBar: buildAppBar(context),
+        body: buildScaffoldBody(context),
+      ),
     );
   }
 
   Container buildScaffoldBody(BuildContext context) {
     final model = context.watch<HomePageModel>();
     final rowCount =
-    MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
+        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     final todayData = model.data;
     final gridLength = (todayData.data!.length % 2 != 0)
         ? todayData.data!.length - 1
         : todayData.data!.length;
     final peopleIndex =
-    (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
+        (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final portraitHeight =
@@ -87,31 +86,25 @@ class HomePageWidget extends StatelessWidget {
                 ? portraitHeight
                 : albumHeight;
         return RefreshIndicator(
-          onRefresh: model.onRefresh,
+          onRefresh: () => model.onRefresh(context),
           child: ListView(
-
-
-             children: [
-
-                      peopleIndex != null
-                          ? Expanded(
-                              flex: 2,
-                              child: Container(
-                                height: cardHeight,
-                                child: OneCardWidget(
-                                  cardData: todayData.data![peopleIndex],
-                                  index: peopleIndex,
-                                  iconSize: 2 / rowCount,
-                                  cardHeight: cardHeight,
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    // ]),
+            children: [
+              peopleIndex != null
+                  ? SizedBox(
+                    height: cardHeight,
+                    child: OneCardWidget(
+                      cardData: todayData.data![peopleIndex],
+                      index: peopleIndex,
+                      iconSize: 2 / rowCount,
+                      cardHeight: cardHeight,
+                    ),
+                  )
+                  : const SizedBox.shrink(),
+              // ]),
               // ),
               ListView.builder(
                 padding: EdgeInsets.zero,
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: (gridLength ~/ rowCount),
                 primary: false,
@@ -135,8 +128,7 @@ class HomePageWidget extends StatelessWidget {
       title: FittedBox(
         fit: BoxFit.fitHeight,
         child: HeaderDataWidget(
-            title:
-            '${todayData.headline!} станом на ${todayData.todayDate}',
+            title: '${todayData.headline!} станом на ${todayData.todayDate}',
             date: todayData.todayDate,
             dayOfWar: DateTime.now()
                 .difference(DateTime(2022, 2, 24))
@@ -281,7 +273,7 @@ class HeaderDataWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Colors.yellow[400]),
           ),
-          SizedBox(
+          const SizedBox(
             width: 15,
           ),
           Column(

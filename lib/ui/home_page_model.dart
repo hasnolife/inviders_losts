@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:inviders_losts/api_client/api_client.dart';
 import 'package:inviders_losts/entity.dart';
+import 'package:inviders_losts/ui/main_navigation.dart';
 
 class HomePageModel extends ChangeNotifier {
   final _apiClient = ApiClient();
@@ -14,9 +15,8 @@ class HomePageModel extends ChangeNotifier {
     _setup();
   }
 
-  Future<void> onRefresh() async {
-    _futureData = _apiClient.getData();
-    notifyListeners();
+  Future<void> onRefresh(BuildContext context) async {
+    Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homePage);
   }
 
   void _setup() {
