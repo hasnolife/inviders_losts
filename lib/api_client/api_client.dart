@@ -22,15 +22,15 @@ class ApiClient {
       final responseList = await response.transform(utf8.decoder).toList();
       final httpDocument = responseList.join();
       final document = parse(httpDocument).body;
-      final headline = document?.getElementsByClassName('headline')[0];
-      final todayDate = document?.getElementsByClassName('black')[0];
+      final headline = document!.getElementsByClassName('headline')[0];
+      final todayDate = document.getElementsByClassName('black')[0];
 
       // print(headline.text);
       // print(todayDate.text);
 
       for (var i = 0; i < 13; i++) {
         final cardString = document
-            ?.getElementsByClassName('casualties')[0]
+            .getElementsByClassName('casualties')[0]
             .children[0]
             .children[0]
             .children[i]
@@ -39,7 +39,7 @@ class ApiClient {
       }
 
       return TodayData(
-          headline: headline?.text, todayDate: todayDate?.text, data: cardData);
+          headline: headline.text, todayDate: todayDate.text, data: cardData);
     } else {
       throw Exception('Error');
     }

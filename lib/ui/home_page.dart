@@ -79,7 +79,6 @@ class HomePageWidget extends StatelessWidget {
     final peopleIndex =
         (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     final portraitHeight =
         MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
     final albumHeight = height / 6;
@@ -115,8 +114,6 @@ class HomePageWidget extends StatelessWidget {
                   itemCount: (gridLength ~/ rowCount),
                   primary: false,
                   itemBuilder: (context, index) {
-                    // final OneCardData cardData = todayData.data?[index];
-
                     return RowCardDataWidget(index: index * rowCount);
                   },
                 ),
@@ -129,11 +126,10 @@ class HomePageWidget extends StatelessWidget {
   }
 
   AppBar buildAppBar(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return AppBar(
-      title: const FittedBox(
-        fit: BoxFit.fitHeight,
-        child: HeaderDataWidget(),
-      ),
+      toolbarHeight: height / 12,
+      title: HeaderDataWidget(),
     );
   }
 }
@@ -192,7 +188,7 @@ class OneCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = context.read<HomePageModel>();
-    final cardData = model.data.data[index];
+    final cardData = model.data.data?[index];
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -249,48 +245,59 @@ class HeaderDataWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = context.read<HomePageModel>();
     final todayData = model.data;
-    final title = '${todayData.headline!} станом на ${todayData.todayDate}';
-    final dayOfWar =
-        DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
+    final title = todayData.headline;
+
     final height = MediaQuery.of(context).size.height;
     final direction = MediaQuery.of(context).orientation == Orientation.portrait
         ? Axis.vertical
         : Axis.horizontal;
     return Flex(
+
       direction: direction,
       children: [
         Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            buildDayOfWar(height),
             Text(
-              dayOfWar,
-              style: buildTextStyle(height / 14),
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            Column(
-              children: [
-                Text(
-                  'ДЕНЬ',
-                  style: buildTextStyle(height / 30),
-                ),
-                Text(
-                  'ВІЙНИ',
-                  style: buildTextStyle(height / 33),
-                ),
-              ],
+              todayData.todayDate.toString(),
+              style: buildTextStyle(27),
             ),
           ],
         ),
-        Container(
-          // height: height,
-          // padding: EdgeInsets.all(10),
-          alignment: Alignment.bottomCenter,
-          child: Text(
-            title,
-            style: buildTextStyle(25),
-          ),
+        Text(
+          title,
+          style: buildTextStyle(16),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDayOfWar(double height) {
+    final dayOfWar =
+    DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
+    return Row(
+      children: [
+        Text(
+          dayOfWar,
+          style: buildTextStyle(height / 20),
+        ),
+        const SizedBox(
+          width: 15,
+        ),
+        Column(
+          children: [
+
+            Text(
+              'ДЕНЬ',
+              style: buildTextStyle(height / 50),
+            ),
+            Text(
+              'ВІЙНИ',
+              style: buildTextStyle(height / 53),
+            ),
+          ],
+
         ),
       ],
     );

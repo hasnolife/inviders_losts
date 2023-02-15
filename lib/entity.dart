@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 
 class TodayData {
-  String? headline;
-  String? todayDate;
+  String headline;
+  String todayDate;
   List<dynamic>? data;
   TodayData({
     required this.headline,
