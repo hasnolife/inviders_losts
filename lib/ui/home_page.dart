@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inviders_losts/ui/home_page_model.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
 import 'package:inviders_losts/entity.dart';
 import 'package:inviders_losts/resourses/consts.dart';
 
@@ -35,11 +34,22 @@ class _ErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Text(
-      "Error $errorMessage",
-      style: const TextStyle(fontSize: 40),
-    ));
+    final model = context.read<HomePageModel>();
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            errorMessage,
+            style: const TextStyle(fontSize: 40),
+          ),
+          ElevatedButton(
+            onPressed: () => model.onRefresh(context),
+            child: const Text('Try Again',style: TextStyle(fontSize: 40)),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -205,10 +215,9 @@ class OneCardWidget extends StatelessWidget {
           maxLines: 3,
           softWrap: true,
           style: TextStyle(
-            fontSize: cardHeight / 6.2 / iconSize,
-            color: Colors.black,
-            height: 0.9
-          ),
+              fontSize: cardHeight / 6.2 / iconSize,
+              color: Colors.black,
+              height: 0.9),
         ),
         title: Row(
           children: [
