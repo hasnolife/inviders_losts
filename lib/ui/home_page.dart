@@ -45,7 +45,7 @@ class _ErrorWidget extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () => model.onRefresh(context),
-            child: const Text('Try Again',style: TextStyle(fontSize: 40)),
+            child: const Text('Try Again', style: TextStyle(fontSize: 40)),
           )
         ],
       ),
@@ -102,7 +102,6 @@ class HomePageWidget extends StatelessWidget {
                     ? SizedBox(
                         height: cardHeight,
                         child: OneCardWidget(
-                          cardData: todayData.data![peopleIndex],
                           index: peopleIndex,
                           iconSize: 2 / rowCount,
                           cardHeight: cardHeight,
@@ -118,8 +117,7 @@ class HomePageWidget extends StatelessWidget {
                   itemBuilder: (context, index) {
                     // final OneCardData cardData = todayData.data?[index];
 
-                    return RowCardDataWidget(
-                        todayData: todayData, index: index * rowCount);
+                    return RowCardDataWidget(index: index * rowCount);
                   },
                 ),
               ],
@@ -131,9 +129,8 @@ class HomePageWidget extends StatelessWidget {
   }
 
   AppBar buildAppBar(BuildContext context) {
-    final todayData = context.read<HomePageModel>().data;
     return AppBar(
-      title: FittedBox(
+      title: const FittedBox(
         fit: BoxFit.fitHeight,
         child: HeaderDataWidget(),
       ),
@@ -144,18 +141,16 @@ class HomePageWidget extends StatelessWidget {
 class RowCardDataWidget extends StatelessWidget {
   const RowCardDataWidget({
     Key? key,
-    required this.todayData,
     required this.index,
   }) : super(key: key);
 
-  final TodayData todayData;
   final int index;
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<HomePageModel>();
     final rowCount =
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
-    // final cardData = todayData.data![index];
     final cardHeight =
         MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
     final cardWidth = MediaQuery.of(context).size.width / (rowCount);
@@ -171,7 +166,6 @@ class RowCardDataWidget extends StatelessWidget {
           return SizedBox(
             width: cardWidth,
             child: OneCardWidget(
-              cardData: todayData.data![index + rowIndex],
               index: index + rowIndex,
               iconSize: 2 / rowCount,
               cardHeight: cardHeight,
@@ -186,19 +180,19 @@ class RowCardDataWidget extends StatelessWidget {
 class OneCardWidget extends StatelessWidget {
   const OneCardWidget({
     Key? key,
-    required this.cardData,
     required this.index,
     required this.iconSize,
     required this.cardHeight,
   }) : super(key: key);
 
-  final OneCardData cardData;
   final int index;
   final double iconSize;
   final double cardHeight;
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<HomePageModel>();
+    final cardData = model.data.data[index];
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -207,8 +201,11 @@ class OneCardWidget extends StatelessWidget {
         style: ListTileStyle.drawer,
         trailing: Text(
           cardData.lostYesterday,
-          style:
-              TextStyle(fontSize: cardHeight / 7 / iconSize, color: Colors.red),
+          style: TextStyle(
+            fontSize: cardHeight / 5 / iconSize,
+            color: Colors.red,
+
+          ),
         ),
         subtitle: Text(
           cardData.title,
@@ -236,7 +233,7 @@ class OneCardWidget extends StatelessWidget {
             Text(
               cardData.losts,
               style: TextStyle(
-                  fontSize: cardHeight / 6 / iconSize, color: Colors.black54),
+                  fontSize: cardHeight / 5 / iconSize, color: Colors.black54),
             ),
           ],
         ),
