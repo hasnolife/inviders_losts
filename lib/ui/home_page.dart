@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inviders_losts/bloc/home_page_bloc.dart';
@@ -165,8 +164,7 @@ class OneCardWidget extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Card(
-      child: ListTile(
-        style: ListTileStyle.drawer,
+      child: AppListTileWidget(
         trailing: Text(
           cardData.lostYesterday,
           style: TextStyle(
@@ -204,6 +202,40 @@ class OneCardWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class AppListTileWidget extends StatelessWidget {
+  const AppListTileWidget(
+      {Key? key,
+      required this.title,
+      required this.subtitle,
+      required this.trailing})
+      : super(key: key);
+
+  final Widget title;
+  final Widget subtitle;
+  final Widget trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              title,
+              trailing,
+            ],
+          ),
+          subtitle,
+        ],
       ),
     );
   }
