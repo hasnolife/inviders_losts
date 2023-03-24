@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:inviders_losts/ui/home_page.dart';
-import 'package:inviders_losts/ui/home_page_model.dart';
+import 'package:inviders_losts/theme/theme.dart';
 import 'package:inviders_losts/ui/main_navigation.dart';
-import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -14,9 +12,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: defaultTheme,
       routes: mainNavigation.routes,
       debugShowCheckedModeBanner: false,
     );

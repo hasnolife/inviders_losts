@@ -1,7 +1,7 @@
+
 import 'package:flutter/material.dart';
-import 'package:inviders_losts/ui/home_page_model.dart';
-import 'package:provider/provider.dart';
-import 'package:inviders_losts/entity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inviders_losts/bloc/home_page_bloc.dart';
 import 'package:inviders_losts/resourses/consts.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -9,16 +9,16 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<HomePageModel>();
-    final futureData = model.futureData;
+    final bloc = context.read<HomePageBloc>();
 
-    return FutureBuilder(
-      future: futureData,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
+    return BlocBuilder(
+      bloc: bloc,
+      builder: (context, state) {
+        if (state is HomePageLoadedState) {
+          state.todayDataModel;
           return const HomePageWidget();
-        } else if (snapshot.hasError) {
-          return _ErrorWidget(errorMessage: snapshot.error.toString());
+        } else if (state is HomePageLoadingErrorState) {
+          return _ErrorWidget(errorMessage: state.error.toString());
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -34,7 +34,7 @@ class _ErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<HomePageModel>();
+    final bloc = context.read<HomePageBloc>();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +44,7 @@ class _ErrorWidget extends StatelessWidget {
             style: const TextStyle(fontSize: 40),
           ),
           ElevatedButton(
-            onPressed: () => model.onRefresh(context),
+            onPressed: () => bloc.onRefresh(),
             child: const Text('Try Again', style: TextStyle(fontSize: 40)),
           )
         ],
@@ -60,76 +60,47 @@ class HomePageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<HomePageBloc>();
+    final height = MediaQuery.of(context).size.height;
+    final cardHeight = MediaQuery.of(context).size.height / (12 / (2) + 2.5);
     return SafeArea(
       child: Scaffold(
-        appBar: buildAppBar(context),
-        body: buildScaffoldBody(context),
-      ),
-    );
-  }
-
-  Container buildScaffoldBody(BuildContext context) {
-    final model = context.watch<HomePageModel>();
-    final rowCount =
-        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
-    final todayData = model.data;
-    final gridLength = (todayData.data!.length % 2 != 0)
-        ? todayData.data!.length - 1
-        : todayData.data!.length;
-    final peopleIndex =
-        (todayData.data!.length % 2 != 0) ? todayData.data!.length - 1 : null;
-    final height = MediaQuery.of(context).size.height;
-    final portraitHeight =
-        MediaQuery.of(context).size.height / (12 / (rowCount) + 2.5);
-    final albumHeight = height / 6;
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final cardHeight =
-              MediaQuery.of(context).orientation == Orientation.portrait
-                  ? portraitHeight
-                  : albumHeight;
-          return RefreshIndicator(
-            onRefresh: () => model.onRefresh(context),
+        appBar: AppBar(
+          toolbarHeight: height / 12,
+          title: const HeaderDataWidget(),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(AppImages.bdImage), fit: BoxFit.cover),
+          ),
+          child: RefreshIndicator(
+            onRefresh: () => bloc.onRefresh(),
             child: ListView(
               children: [
-                peopleIndex != null
-                    ? SizedBox(
-                        height: cardHeight,
-                        child: OneCardWidget(
-                          index: peopleIndex,
-                          iconSize: 2 / rowCount,
-                          cardHeight: cardHeight,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
+                SizedBox(
+                  height: cardHeight,
+                  child: OneCardWidget(
+                    index: 12,
+                    iconSize: 1,
+                    cardHeight: cardHeight,
+                  ),
+                ),
                 ListView.builder(
                   padding: EdgeInsets.zero,
                   physics: const ScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: (gridLength ~/ rowCount),
+                  itemCount: 6,
                   primary: false,
                   itemBuilder: (context, index) {
-                    return RowCardDataWidget(index: index * rowCount);
+                    return RowCardDataWidget(index: index * 2);
                   },
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
-    );
-  }
-
-  AppBar buildAppBar(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    return AppBar(
-      toolbarHeight: height / 12,
-      title: HeaderDataWidget(),
     );
   }
 }
@@ -144,7 +115,6 @@ class RowCardDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<HomePageModel>();
     final rowCount =
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
     final cardHeight =
@@ -187,8 +157,10 @@ class OneCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<HomePageModel>();
-    final cardData = model.data.data?[index];
+    final bloc = context.read<HomePageBloc>();
+    final state = bloc.state as HomePageLoadedState;
+
+    final cardData = state.todayDataModel.data[index];
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -200,7 +172,6 @@ class OneCardWidget extends StatelessWidget {
           style: TextStyle(
             fontSize: cardHeight / 5 / iconSize,
             color: Colors.red,
-
           ),
         ),
         subtitle: Text(
@@ -243,8 +214,8 @@ class HeaderDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<HomePageModel>();
-    final todayData = model.data;
+    final state = context.read<HomePageBloc>().state as HomePageLoadedState;
+    final todayData = state.todayDataModel;
     final title = todayData.headline;
 
     final height = MediaQuery.of(context).size.height;
@@ -252,7 +223,6 @@ class HeaderDataWidget extends StatelessWidget {
         ? Axis.vertical
         : Axis.horizontal;
     return Flex(
-
       direction: direction,
       children: [
         Row(
@@ -260,7 +230,7 @@ class HeaderDataWidget extends StatelessWidget {
           children: [
             buildDayOfWar(height),
             Text(
-              todayData.todayDate.toString(),
+              todayData.todayData.toString(),
               style: buildTextStyle(27),
             ),
           ],
@@ -275,7 +245,7 @@ class HeaderDataWidget extends StatelessWidget {
 
   Widget buildDayOfWar(double height) {
     final dayOfWar =
-    DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
+        DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
     return Row(
       children: [
         Text(
@@ -287,7 +257,6 @@ class HeaderDataWidget extends StatelessWidget {
         ),
         Column(
           children: [
-
             Text(
               'ДЕНЬ',
               style: buildTextStyle(height / 50),
@@ -297,7 +266,6 @@ class HeaderDataWidget extends StatelessWidget {
               style: buildTextStyle(height / 53),
             ),
           ],
-
         ),
       ],
     );

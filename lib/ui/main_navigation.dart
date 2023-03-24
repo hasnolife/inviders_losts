@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inviders_losts/bloc/home_page_bloc.dart';
 import 'package:inviders_losts/ui/home_page.dart';
-import 'package:inviders_losts/ui/home_page_model.dart';
-import 'package:provider/provider.dart';
 
 abstract class MainNavigationRouteNames {
   static const homePage = '/';
@@ -10,8 +10,11 @@ abstract class MainNavigationRouteNames {
 
 class MainNavigation {
   Map<String, Widget Function(BuildContext)> routes = {
-    MainNavigationRouteNames.homePage: (_) =>
-        ChangeNotifierProvider<HomePageModel>(
-            create: (_) => HomePageModel(), child: const MyHomePage()),
+    MainNavigationRouteNames.homePage: (_) {
+      return BlocProvider<HomePageBloc>(
+          create: (_) => HomePageBloc(),
+          child: const MyHomePage(),
+        );
+    },
   };
 }

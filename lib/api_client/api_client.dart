@@ -5,20 +5,19 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:html/parser.dart';
-import 'package:inviders_losts/entity.dart';
+import 'package:inviders_losts/entity/entity.dart';
 
 import 'package:inviders_losts/resourses/consts.dart';
 
 class ApiClient {
   final _client = HttpClient();
 
-  Future<TodayData> getData() async {
+  Future<TodayDataModel> getData() async {
     final request = await _client.getUrl(Uri.parse(Configuration.url));
 
     final response = await request.close();
 
-    final List<OneCardData> cardData = [];
-    if (response.statusCode == 200) {
+    final List<OneCardViewModel> cardData = [];
       final responseList = await response.transform(utf8.decoder).toList();
       final httpDocument = responseList.join();
       final document = parse(httpDocument).body;
@@ -35,19 +34,17 @@ class ApiClient {
             .children[0]
             .children[i]
             .text;
-        cardData.add(_stringDivider(cardString ?? ''));
+        cardData.add(_stringDivider(cardString));
       }
 
-      return TodayData(
-          headline: headline.text, todayDate: todayDate.text, data: cardData);
-    } else {
-      throw Exception('Error');
-    }
+      return TodayDataModel(
+          headline: headline.text, todayData: todayDate.text, data: cardData);
+
   }
 
 
 // parse string and return data class
-  OneCardData _stringDivider(String cardString) {
+  OneCardViewModel _stringDivider(String cardString) {
     final cardStringsList = cardString.split('— ');
     final title = cardStringsList[0];
     final lost = cardStringsList[1].split('(');
@@ -64,7 +61,7 @@ class ApiClient {
       lostYesterday = '';
     }
 
-    return OneCardData(
+    return OneCardViewModel(
       icon: null,
       title: title,
       losts: losts,
