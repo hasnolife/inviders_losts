@@ -1,5 +1,5 @@
 abstract class Configuration {
- static const url = 'https://index.minfin.com.ua/en/russian-invading/casualties/';
+ static const url = 'https://index.minfin.com.ua/ua/russian-invading/casualties/';
 }
 
 abstract class AppImages {

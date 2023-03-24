@@ -164,6 +164,7 @@ class OneCardWidget extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Card(
+      // color: Colors.transparent,
       child: AppListTileWidget(
         trailing: Text(
           cardData.lostYesterday,
@@ -249,64 +250,54 @@ class HeaderDataWidget extends StatelessWidget {
     final state = context.read<HomePageBloc>().state as HomePageLoadedState;
     final todayData = state.todayDataModel;
     final title = todayData.headline;
-
+    final style = Theme.of(context).appBarTheme.titleTextStyle;
     final height = MediaQuery.of(context).size.height;
     final direction = MediaQuery.of(context).orientation == Orientation.portrait
         ? Axis.vertical
         : Axis.horizontal;
+    final dayOfWar =
+        DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
+
     return Flex(
       direction: direction,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            buildDayOfWar(height),
+            Row(
+              children: [
+                Text(
+                  dayOfWar,
+                  style: style?.copyWith(fontSize: height / 20),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Column(
+                  children: [
+                    Text(
+                      'ДЕНЬ',
+                      style: style?.copyWith(fontSize: height / 50),
+                    ),
+                    Text(
+                      'ВІЙНИ',
+                      style: style?.copyWith(fontSize: height / 53),
+                    ),
+                  ],
+                ),
+              ],
+            ),
             Text(
               todayData.todayData.toString(),
-              style: buildTextStyle(27),
+              style: style?.copyWith(fontSize: 27),
             ),
           ],
         ),
         Text(
           title,
-          style: buildTextStyle(16),
+          style: style?.copyWith(fontSize: 16),
         ),
       ],
     );
-  }
-
-  Widget buildDayOfWar(double height) {
-    final dayOfWar =
-        DateTime.now().difference(DateTime(2022, 2, 24)).inDays.toString();
-    return Row(
-      children: [
-        Text(
-          dayOfWar,
-          style: buildTextStyle(height / 20),
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        Column(
-          children: [
-            Text(
-              'ДЕНЬ',
-              style: buildTextStyle(height / 50),
-            ),
-            Text(
-              'ВІЙНИ',
-              style: buildTextStyle(height / 53),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  TextStyle buildTextStyle(double fontSize) {
-    return TextStyle(
-        fontSize: fontSize,
-        fontWeight: FontWeight.bold,
-        color: Colors.yellow[400]);
   }
 }
